@@ -4,16 +4,29 @@ import (
 	"fmt"
 	"net/http"
 
-	"weather-api-go.ilijakrilovic.net/internal/data"
+	"weather-api-go.ilijakrilovic.net/internal/service"
 )
 
 func (app *application) weatherHandler(w http.ResponseWriter, r *http.Request) {
-	var weather data.Weather
 
-	err := app.readJSON(w, r, &weather)
-	if err != nil {
-		http.Error(w, "error occurred", http.StatusInternalServerError)
+	city := r.URL.Query().Get("city")
+
+	if city == "" {
+		http.Error(w, "city query parameter is required", http.StatusBadRequest)
+		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", weather)
+	weather, err := service.GetWeather(city)
+	if err != nil {
+		app.logger.Println(err)
+		http.Error(w, fmt.Sprintf("error retrieving weather: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, weather, nil)
+
+	if err != nil {
+		app.logger.Println(err)
+		http.Error(w, "the server ecnountered a problem and could not process your request", http.StatusInternalServerError)
+	}
 }

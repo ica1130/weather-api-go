@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 )
 
 const version = "1.0.0."
@@ -21,6 +22,7 @@ type config struct {
 type application struct {
 	config config
 	logger *log.Logger
+	redis  *redis.Client
 }
 
 func main() {
@@ -36,9 +38,12 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
+	redisClient := initializeRedis()
+
 	app := &application{
 		config: cfg,
 		logger: logger,
+		redis:  redisClient,
 	}
 
 	srv := &http.Server{

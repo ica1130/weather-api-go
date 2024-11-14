@@ -31,6 +31,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.Parse()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file")
@@ -38,7 +39,12 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	redisClient := initializeRedis()
+	redisClient, err := initializeRedis()
+	if err != nil {
+		log.Fatalf("error establishing a redis connection: %v", err)
+		os.Exit(1)
+	}
+	defer redisClient.Close()
 
 	app := &application{
 		config: cfg,

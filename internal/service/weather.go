@@ -24,7 +24,7 @@ func (w WeatherService) GetWeatherWithCache(ctx context.Context, city string) (*
 	cachedData, err := w.RedisClient.Get(ctx, city).Result()
 
 	if err == redis.Nil {
-		weather, err := GetWeather(city)
+		weather, err := getWeatherFromAPI(city)
 		if err != nil {
 			return weather, err
 		}
@@ -45,7 +45,7 @@ func (w WeatherService) GetWeatherWithCache(ctx context.Context, city string) (*
 
 }
 
-func GetWeather(city string) (*data.Weather, error) {
+func getWeatherFromAPI(city string) (*data.Weather, error) {
 
 	apiKey := os.Getenv("WEATHER_API_KEY")
 	if apiKey == "" {

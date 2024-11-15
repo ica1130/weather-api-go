@@ -1,4 +1,4 @@
-package main
+package redis
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 
 var redisCtx = context.Background()
 
-func initializeRedis() (*redis.Client, error) {
+func InitializeRedis() (*redis.Client, error) {
 
 	var counts int64
 	var backOff = 1 * time.Second

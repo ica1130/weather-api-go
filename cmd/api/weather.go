@@ -29,7 +29,7 @@ func (app *application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 		weather, err := service.GetWeather(city)
 		if err != nil {
 			app.logger.Println(err)
-			http.Error(w, fmt.Sprintf("error retrieving weather: %v", err), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("error retrieving weather: %v", err), http.StatusBadRequest)
 			return
 		}
 

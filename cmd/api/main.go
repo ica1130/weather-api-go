@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
+	redis "github.com/redis/go-redis/v9"
+	redisConfig "weather-api-go.ilijakrilovic.net/internal/redis"
 )
 
 const version = "1.0.0."
@@ -39,11 +40,13 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	redisClient, err := initializeRedis()
+	redisClient, err := redisConfig.InitializeRedis()
+
 	if err != nil {
 		log.Fatalf("error establishing a redis connection: %v", err)
 		os.Exit(1)
 	}
+
 	defer redisClient.Close()
 
 	app := &application{
